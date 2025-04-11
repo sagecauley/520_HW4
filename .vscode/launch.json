@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/520/520_HW4/hw4",
-      "program": "d:/520/520_HW4/hw4/build/Debug/outDebug",
+      "cwd": "d:/520/520_HW4/hw4/3way-pthread",
+      "program": "d:/520/520_HW4/hw4/3way-pthread/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
