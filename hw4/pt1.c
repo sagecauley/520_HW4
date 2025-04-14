@@ -115,9 +115,11 @@ main() {
 			return NULL;
 		}
 
-		ssize_t total_read = 0;
-		uint8_t *buf = (uint8_t *)bs->blocks;
-		size_t expected_size = sizeof(bs->blocks);
+		//ssize_t total_read = 0;
+		//uint8_t *buf = (uint8_t *)bs->blocks;
+		//size_t expected_size = sizeof(bs->blocks);
+		
+		//Need to read each line till the end then put them into the threads. LIKE WHAT 
 
 		while ((size_t)total_read < expected_size)
 		{
