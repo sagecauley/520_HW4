@@ -2,8 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define NUM_THREADS 40
+
+
 
 pthread_mutex_t count_mutex;
 char** lines = NULL;            // Array of dynamically allocated lines
@@ -114,17 +117,30 @@ int main(int argc, char* argv[]) {
 
     pthread_mutex_init(&count_mutex, NULL);
 
+    // Record the start time
+    clock_t start_time = clock();
+
+    
     // Create threads
     for (int i = 0; i < NUM_THREADS; i++) {
         thread_ids[i] = i;
         pthread_create(&threads[i], NULL, process_lines, &thread_ids[i]);
     }
+    
+
 
     // Wait for all threads
     for (int i = 0; i < NUM_THREADS; i++) {
         pthread_join(threads[i], NULL);
     }
+    // Record the end time
+    clock_t end_time = clock();
 
+    // Calculate the elapsed time in seconds
+    double elapsed_time = (double)(end_time - start_time); /// CLOCKS_PER_SEC;
+
+    // Print the elapsed time
+    printf("Thread time: %f seconds\n", elapsed_time);
     // Print results
     for (int i = 0; i < num_lines; i++) {
         printf("%d: %d\n", i, max_char_values[i]);
@@ -137,6 +153,7 @@ int main(int argc, char* argv[]) {
     free(lines);
     free(max_char_values);
     pthread_mutex_destroy(&count_mutex);
+    //printf("Task_Complete");
 
     return 0;
 }
