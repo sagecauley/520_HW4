@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
     clock_t end_time = clock();
 
     // Calculate the elapsed time in seconds
-    double elapsed_time = (double)(end_time - start_time); /// CLOCKS_PER_SEC;
+    double elapsed_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
 
     // Print the elapsed time
     printf("Thread time: %f seconds\n", elapsed_time);
