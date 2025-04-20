@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-#define NUM_THREADS 40
+int NUM_THREADS;
 
 
 
@@ -13,8 +13,8 @@ char** lines = NULL;            // Array of dynamically allocated lines
 int num_lines = 0;              // Total number of lines initally 0 allocates it in main
 int* max_char_values = NULL;
 
-pthread_t threads[NUM_THREADS];
-int thread_ids[NUM_THREADS];
+pthread_t* threads;
+int* thread_ids;
 
 // Function to compute max ASCII value in a line
 int max_ascii_value(const char* line) {
@@ -57,12 +57,13 @@ void* process_lines(void* arg) {
 
 //Main function to run and print out the max ASCII character in each line
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
+    if (argc != 3) {
         fprintf(stderr, "Usage: %s <file_path>\n", argv[0]);
         return -1;
     }
 
     const char* file_path = argv[1];
+    NUM_THREADS = atoi(argv[2]);
     FILE* file = fopen(file_path, "r");
     if (!file) {
         printf("Error opening file");
@@ -115,6 +116,9 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
+    threads = malloc(NUM_THREADS * sizeof(pthread_t));
+    thread_ids = malloc(NUM_THREADS * sizeof(int));
+
     pthread_mutex_init(&count_mutex, NULL);
 
     // Record the start time
@@ -152,6 +156,8 @@ int main(int argc, char* argv[]) {
     }
     free(lines);
     free(max_char_values);
+    free(threads);
+    free(thread_ids);
     pthread_mutex_destroy(&count_mutex);
     //printf("Task_Complete");
 
