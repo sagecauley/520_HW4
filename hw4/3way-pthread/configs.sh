@@ -6,7 +6,9 @@ sbatch --time=5 --mem=7G --cpus-per-task=15 --threads-per-core=1 --ntasks=1 --no
 sbatch --time=5 --mem=7G --cpus-per-task=20 --threads-per-core=1 --ntasks=1 --nodes=1 --constraint=moles --job-name='20_core' ./program_thread.sh 20
 
 #Run on 2 diffrent system
+sbatch --time=5 --mem=7G --cpus-per-task=5 --threads-per-core=1 --ntasks=2 --nodes=2 --constraint=moles --job-name='10_core_2sys' ./program_thread.sh 10
 sbatch --time=5 --mem=7G --cpus-per-task=10 --threads-per-core=1 --ntasks=2 --nodes=2 --constraint=moles --job-name='20_core_2sys' ./program_thread.sh 20
+
 
 
 #This Will run diffrent files for the program 
@@ -20,4 +22,6 @@ sbatch --time=5 --mem=7G --cpus-per-task=10 --threads-per-core=1 --ntasks=2 --no
 
 
 
+#Code Graveyard
+#sbatch --time=5 --mem=7G --cpus-per-task=10 --threads-per-core=1 --ntasks=2 --nodes=2 --constraint=moles --job-name='5_core_1K' ./pthread_dif_files.sh 5 random_text_1M.txt
 #sbatch --time=5 --mem-per-cpu=512M --cpus-per-task=10 --ntasks=2 --nodes=1 --constraint=moles ./program_thread.sh
