@@ -120,16 +120,10 @@ int main(int argc, char* argv[]) {
     thread_ids = malloc(NUM_THREADS * sizeof(int));
 
     pthread_mutex_init(&count_mutex, NULL);
-<<<<<<< HEAD
-    printf("%d\n",NUM_THREADS);
-    // Record the start time
-    clock_t start_time = clock();
-=======
 
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_MONOTONIC, &start_time);
 
->>>>>>> 1d86defd50d31b9e549713a77ff7e651cb8fbdbe
 
     
     // Create threads
