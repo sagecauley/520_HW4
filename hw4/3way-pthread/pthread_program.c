@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
     thread_ids = malloc(NUM_THREADS * sizeof(int));
 
     pthread_mutex_init(&count_mutex, NULL);
-
+    printf("%d\n",NUM_THREADS);
     // Record the start time
     clock_t start_time = clock();
 
