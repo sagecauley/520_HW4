@@ -121,8 +121,9 @@ int main(int argc, char* argv[]) {
 
     pthread_mutex_init(&count_mutex, NULL);
 
-    // Record the start time
-    clock_t start_time = clock();
+    struct timespec start_time, end_time;
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
+
 
     
     // Create threads
@@ -138,10 +139,11 @@ int main(int argc, char* argv[]) {
         pthread_join(threads[i], NULL);
     }
     // Record the end time
-    clock_t end_time = clock();
+    clock_gettime(CLOCK_MONOTONIC, &end_time);
 
     // Calculate the elapsed time in seconds
-    double elapsed_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+    double elapsed_time = (end_time.tv_sec - start_time.tv_sec) +
+    (end_time.tv_nsec - start_time.tv_nsec) / 1e9;
 
     // Print the elapsed time
     printf("Thread time: %f seconds\n", elapsed_time);
