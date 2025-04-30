@@ -94,6 +94,11 @@ main() {
 	pthread_t threads[NUM_THREADS];
 	pthread_attr_t attr;
 	void *status;
+	file_name = NULL;
+
+
+	
+
 
 
 	/* Initialize and set thread detached attribute */
@@ -102,6 +107,31 @@ main() {
 
 	init_arrays();
 
+	//Read the File then load it into memery 
+	int fd = open(file_name, O_RDONLY); //Open the file for reading
+		if (fd < 0)
+		{
+			printf("Error: Unable to open file %s for deserialization: %s\n", file_name, strerror(errno));
+			return NULL;
+		}
+
+		ssize_t total_read = 0;
+		uint8_t *buf = (uint8_t *)bs->blocks;
+		size_t expected_size = sizeof(bs->blocks);
+
+		while ((size_t)total_read < expected_size)
+		{
+			ssize_t bytes = read(fd, buf + total_read, expected_size - (size_t)total_read);
+			if (bytes <= 0)
+			{
+				printf("Error: Failed to read block store from file: %s\n", strerror(errno));
+				close(fd);
+				exit(-1);
+			}
+			total_read += bytes;
+		}
+
+	//Creates The Threads
 	for (i = 0; i < NUM_THREADS; i++ ) {
 	      rc = pthread_create(&threads[i], &attr, count_array, (void *)i);
 	      if (rc) {

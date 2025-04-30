@@ -1,0 +1,32 @@
+# README
+
+## Making Files Executable and Running the Program
+
+Follow the steps below to make the necessary files executable and run the program:
+
+### 1. Make Files Executable
+Run the following commands in your terminal to give execute permissions to the required files:
+
+```bash
+chmod u+x configs.sh
+chmod u+x program_thread.sh
+chmod u+x pthread_dif_files.sh
+```
+
+### 2. Build the Program
+Run the `make` command in the current directory to compile the program:
+
+```bash
+make
+```
+
+### 3. Run the Script
+Execute the `configs.sh` script to start the program:
+
+```bash
+./configs.sh
+```
+
+### Notes
+- Ensure you are in the correct directory containing the files before running the commands.
+- If you encounter any issues, verify that the files exist and have the correct permissions.
