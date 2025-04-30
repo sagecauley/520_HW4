@@ -12,14 +12,14 @@
 #
 
 CC        = gcc
-CFLAGS    = -O2 -pthread
+CFLAGS = -fopenmp -O2
 
 #
 # Modify TOPDIR if you use your own include files and library files
 #
 
-PROGRAM   = pthread_program			# name of the binary
-SRCS      = pthread_program.c		# source file
+PROGRAM   = openmp_program		# name of the binary
+SRCS      = openmp_program.c		# source file
 OBJS      = $(SRCS:.c=.o)		# object file
 
 #
@@ -31,7 +31,7 @@ default: all
 all: $(PROGRAM) 
 
 $(PROGRAM): $(OBJS)
-	$(CC) $(OBJS) -o $(PROGRAM) $(LDFLAGS)
+	$(CC) $(OBJS) -o $(PROGRAM) $(CFLAGS)
 
 clean:
 	/bin/rm -f $(OBJS) $(PROGRAM)
