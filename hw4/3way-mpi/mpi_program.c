@@ -135,9 +135,9 @@ int main(int argc, char* argv[]) {
                 0, MPI_COMM_WORLD);
 
     if (pid == 0) {
-        for (int i = 0; i < num_lines; ++i) {
-            printf("Line %d max ASCII: %d\n", i, all_max_ascii[i]);
-        }
+        //for (int i = 0; i < num_lines; ++i) {
+            //printf("Line %d max ASCII: %d\n", i, all_max_ascii[i]);
+        //}
 
         free(all_max_ascii);
         free(lines);
