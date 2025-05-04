@@ -161,7 +161,7 @@ int main(int argc, char* argv[]) {
     free(threads);
     free(thread_ids);
     pthread_mutex_destroy(&count_mutex);
-    //printf("Task_Complete");
+
 
     return 0;
 }
