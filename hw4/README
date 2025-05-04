@@ -5,7 +5,7 @@
 Follow the steps below to make the necessary files executable and run the program:
 
 ### 1. Make Files Executable
-Run the following commands in your terminal to give execute permissions to the required files:
+Run the following commands in your terminal to give execute permissions to the required files- NOTE NEED TO CHANGE THIS
 
 ```bash
 chmod u+x configs.sh
