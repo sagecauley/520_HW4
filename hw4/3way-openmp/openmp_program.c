@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
 
     // Uncomment if you want to print the results
     for (int i = 0; i < num_lines; i++) {
-        printf("%d: %d\n", i, max_char_values[i]);
+        //printf("%d: %d\n", i, max_char_values[i]);
     }
 
     // Clean up

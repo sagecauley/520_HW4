@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
 
     if (pid == 0) {
         for (int i = 0; i < num_lines; ++i) {
-            printf("%d: %d\n", i, all_max_ascii[i]);
+            //printf("%d: %d\n", i, all_max_ascii[i]);
         }
 
         free(all_max_ascii);
