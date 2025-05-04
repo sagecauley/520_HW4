@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+//#include <gperftools/profiler.h>
 
 int NUM_THREADS;
 
@@ -57,7 +58,7 @@ void* process_lines(void* arg) {
 
 //Main function to run and print out the max ASCII character in each line
 int main(int argc, char* argv[]) {
-    if (argc != 3) {
+    if (argc < 3) {
         fprintf(stderr, "Usage: %s <file_path>\n", argv[0]);
         return -1;
     }
@@ -120,7 +121,9 @@ int main(int argc, char* argv[]) {
     thread_ids = malloc(NUM_THREADS * sizeof(int));
 
     pthread_mutex_init(&count_mutex, NULL);
-
+    //if (argc > 3) {
+    //    ProfilerStart(argc[3]); // Start profiling
+    //}
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_MONOTONIC, &start_time);
 
@@ -147,6 +150,10 @@ int main(int argc, char* argv[]) {
 
     // Print the elapsed time
     printf("Thread time: %f seconds\n", elapsed_time);
+    
+    //if (argc > 3) {
+    //    ProfilerStop(); // Start profiling
+    //}
     // Print results
     for (int i = 0; i < num_lines; i++) {
         //printf("%d: %d\n", i, max_char_values[i]);
