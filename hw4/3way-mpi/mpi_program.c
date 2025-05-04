@@ -94,6 +94,10 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    struct timespec start_time, end_time;
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
+
+    
     // Each process calculates how many lines it will get
     int local_line_bytes;
     MPI_Scatter(sendcounts, 1, MPI_INT, &local_line_bytes, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -133,6 +137,16 @@ int main(int argc, char* argv[]) {
     MPI_Gatherv(local_max_ascii, local_line_count, MPI_INT,
                 all_max_ascii, recvcounts_int, displs_int, MPI_INT,
                 0, MPI_COMM_WORLD);
+
+
+
+    
+    // Calculate the elapsed time in seconds
+    double elapsed_time = (end_time.tv_sec - start_time.tv_sec) +
+    (end_time.tv_nsec - start_time.tv_nsec) / 1e9;
+
+    // Print the elapsed time
+    printf("Thread time: %f seconds\n", elapsed_time);
 
     if (pid == 0) {
         //for (int i = 0; i < num_lines; ++i) {
