@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
             }
         }
         // Allocate memory and copy the line
-        lines[num_lines] = malloc(len + 1);  // +1 for the '/0'
+        lines[num_lines] = malloc(len + 1);
         if (!lines[num_lines]) {
             printf("malloc failed for line");
             fclose(file);
