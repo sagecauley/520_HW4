@@ -19,7 +19,7 @@ int max_ascii_value_mpi(const char* line) {
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
-        fprintf(stderr, "Usage: %s <file_path> <num_threads>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <file_path>\n", argv[0]);
         return 1;
     }
 
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
         }
 
         size_t capacity = 1024;
-        lines = malloc(capacity * MAX_LINE_LENGTH);
+        lines = malloc(capacity * sizeof(*lines));
         if (!lines) {
             fprintf(stderr, "Initial memory allocation failed\n");
             fclose(file);
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
         while (fgets(buffer, MAX_LINE_LENGTH, file)) {
             if (num_lines >= capacity) {
                 capacity *= 2;
-                char (*new_lines)[MAX_LINE_LENGTH] = realloc(lines, capacity * MAX_LINE_LENGTH);
+                char (*new_lines)[MAX_LINE_LENGTH] = realloc(lines, capacity * sizeof(*lines));
                 if (!new_lines) {
                     fprintf(stderr, "Memory reallocation failed\n");
                     free(lines);
@@ -76,33 +76,46 @@ int main(int argc, char* argv[]) {
         fclose(file);
     }
 
-    // Broadcast the number of lines
+    // Broadcast number of lines
     MPI_Bcast(&num_lines, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-    // Allocate local storage
-    int lines_per_proc = (num_lines + num_procs - 1) / num_procs;
-    char* local_lines = malloc(lines_per_proc * MAX_LINE_LENGTH);
-    int* local_max_ascii = malloc(lines_per_proc * sizeof(int));
+    // Compute send counts and displacements
+    int* sendcounts = malloc(num_procs * sizeof(int));
+    int* displs = malloc(num_procs * sizeof(int));
 
-    // Scatter the data
-    MPI_Scatter(lines, lines_per_proc * MAX_LINE_LENGTH, MPI_CHAR,
-                local_lines, lines_per_proc * MAX_LINE_LENGTH, MPI_CHAR,
-                0, MPI_COMM_WORLD);
+    int base = num_lines / num_procs;
+    int rem = num_lines % num_procs;
+
+    for (int i = 0; i < num_procs; ++i) {
+        sendcounts[i] = (i < rem ? base + 1 : base) * MAX_LINE_LENGTH;
+        displs[i] = (i == 0) ? 0 : displs[i-1] + sendcounts[i-1];
+    }
+
+    int local_line_count = sendcounts[pid] / MAX_LINE_LENGTH;
+    char* local_lines = malloc(sendcounts[pid]);
+    int* local_max_ascii = malloc(local_line_count * sizeof(int));
+
+    // Scatter data
+    MPI_Scatterv(lines, sendcounts, displs, MPI_CHAR,
+             local_lines, sendcounts[pid], MPI_CHAR,
+             0, MPI_COMM_WORLD);
 
     // Compute local max ASCII values
-    for (int i = 0; i < lines_per_proc; ++i) {
+    for (int i = 0; i < local_line_count; ++i) {
         local_max_ascii[i] = max_ascii_value_mpi(&local_lines[i * MAX_LINE_LENGTH]);
     }
+
+    int* recvcounts = sendcounts;
+    int* recvdispls = displs;
 
     int* all_max_ascii = NULL;
     if (pid == 0) {
         all_max_ascii = malloc(num_lines * sizeof(int));
     }
 
-    // Gather all results to the root process
-    MPI_Gather(local_max_ascii, lines_per_proc, MPI_INT,
-               all_max_ascii, lines_per_proc, MPI_INT,
-               0, MPI_COMM_WORLD);
+    MPI_Gatherv(local_max_ascii, local_line_count, MPI_INT,
+            all_max_ascii, recvcounts, recvdispls, MPI_INT,
+            0, MPI_COMM_WORLD);
 
     if (pid == 0) {
         for (int i = 0; i < num_lines; ++i) {
@@ -115,8 +128,6 @@ int main(int argc, char* argv[]) {
     // Free allocated memory
     free(local_lines);
     free(local_max_ascii);
-
-    MPI_Finalize();
-
-    return 0;
+    free(sendcounts);
+    free(displs);
 }
