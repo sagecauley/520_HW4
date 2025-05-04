@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
+#include <omp.h>
 #define MAX_LINE_LENGTH 1024
 
 // Function to compute max ASCII value in a line (up to '\n' or null terminator)
@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 
     const char* file_path = argv[1];
 
-    clock_t start_time = clock();
+    //clock_t start_time = clock();
 
     MPI_Init(&argc, &argv);
 
@@ -96,7 +96,6 @@ int main(int argc, char* argv[]) {
 
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_MONOTONIC, &start_time);
-
     
     // Each process calculates how many lines it will get
     int local_line_bytes;
