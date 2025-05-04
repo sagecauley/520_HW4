@@ -18,13 +18,12 @@ int max_ascii_value_mpi(const char* line) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc != 3) {
+    if (argc != 2) {
         fprintf(stderr, "Usage: %s <file_path> <num_threads>\n", argv[0]);
         return 1;
     }
 
     const char* file_path = argv[1];
-    int num_threads = atoi(argv[2]);
 
     clock_t start_time = clock();
 
@@ -33,14 +32,6 @@ int main(int argc, char* argv[]) {
     int pid, num_procs;
     MPI_Comm_rank(MPI_COMM_WORLD, &pid);
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-
-    if (num_threads != num_procs) {
-        if (pid == 0) {
-            fprintf(stderr, "Error: Number of threads (MPI processes) must match num_threads argument.\n");
-        }
-        MPI_Finalize();
-        return 1;
-    }
 
     char (*lines)[MAX_LINE_LENGTH] = NULL;
     int num_lines = 0;
