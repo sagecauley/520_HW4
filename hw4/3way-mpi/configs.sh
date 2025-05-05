@@ -17,11 +17,3 @@ sbatch --time=5 --mem=7G --cpus-per-task=10 --threads-per-core=1 --ntasks=2 --no
 sbatch --time=5 --mem=7G --cpus-per-task=10 --threads-per-core=1 --ntasks=2 --nodes=1 --constraint=moles --job-name='5_core_100K' ./pthread_dif_files.sh 5 ../random_text_10k.txt
 sbatch --time=5 --mem=7G --cpus-per-task=10 --threads-per-core=1 --ntasks=2 --nodes=1 --constraint=moles --job-name='5_core_10K' ./pthread_dif_files.sh 5 ../random_text_100k.txt
 sbatch --time=5 --mem=7G --cpus-per-task=10 --threads-per-core=1 --ntasks=2 --nodes=1 --constraint=moles --job-name='5_core_1K' ./pthread_dif_files.sh 5 ../random_text_1M.txt
-
-
-
-
-
-#Code Graveyard
-#sbatch --time=5 --mem=7G --cpus-per-task=10 --threads-per-core=1 --ntasks=2 --nodes=2 --constraint=moles --job-name='5_core_1K' ./pthread_dif_files.sh 5 random_text_1M.txt
-#sbatch --time=5 --mem-per-cpu=512M --cpus-per-task=10 --ntasks=2 --nodes=1 --constraint=moles ./program_thread.sh
