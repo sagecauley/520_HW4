@@ -23,7 +23,7 @@ int max_ascii_value(const char* line) {
     while (*line) {
         unsigned char c = (unsigned char)*line;
         if (c <= 127 && c > max_value) {
-            max_value = c;
+            max_value = c; // set new max value if current char exceeds previous max
         }
         line++;
     }
@@ -38,18 +38,19 @@ void* process_lines(void* arg) {
     int end_line;
 
     if (thread_id == NUM_THREADS - 1) {
-        end_line = num_lines;
+        end_line = num_lines; // if final thread, set end line to last line
     } else {
         end_line = start_line + lines_per_thread;
+        // otherwise, calculate using start line and # of lines per thread
     }
 
     //Getting the max value from everyline
     for (int i = start_line; i < end_line; i++) {
         int max_value = max_ascii_value(lines[i]);
 
-        pthread_mutex_lock(&count_mutex);
-        max_char_values[i] = max_value;
-        pthread_mutex_unlock(&count_mutex);
+        pthread_mutex_lock(&count_mutex); // lock access to max_char_values
+        max_char_values[i] = max_value; // set max value for location i
+        pthread_mutex_unlock(&count_mutex); // return access to max_char_values
     }
 
     return NULL;
@@ -58,24 +59,25 @@ void* process_lines(void* arg) {
 //Main function to run and print out the max ASCII character in each line
 int main(int argc, char* argv[]) {
     if (argc != 3) {
+        // print error if improper arguments passed
         fprintf(stderr, "Usage: %s <file_path>\n", argv[0]);
         return -1;
     }
 
-    const char* file_path = argv[1];
-    NUM_THREADS = atoi(argv[2]);
-    FILE* file = fopen(file_path, "r");
+    const char* file_path = argv[1]; // set file path from args
+    NUM_THREADS = atoi(argv[2]); // set number of threads from args
+    FILE* file = fopen(file_path, "r"); // open file with lines
     if (!file) {
-        printf("Error opening file");
+        printf("Error opening file"); // print error if couldn't open file
         return -1;
     }
 
     // set up the lines
     size_t capacity = 1000000;
-    lines = malloc(capacity * sizeof(char*));
+    lines = malloc(capacity * sizeof(char*)); // allocate memory for lines
     if (!lines) {
         printf("malloc failed");
-        fclose(file);
+        fclose(file); // throw error if failure allocation
         return -1;
     }
 
@@ -85,11 +87,11 @@ int main(int argc, char* argv[]) {
     while (getline(&line, &len, file) != -1) {
         //Allocates more memory if the lines go above 1 million
         if (num_lines >= capacity) {
-            capacity *= 2;
+            capacity *= 2; // increase capacity if num_lines exceeds capacity
             lines = realloc(lines, capacity * sizeof(char*));
             if (!lines) {
                 printf("realloc failed");
-                fclose(file);
+                fclose(file); // throw error if reallocation fails
                 free(line);
                 return -1;
             }
@@ -98,7 +100,7 @@ int main(int argc, char* argv[]) {
         lines[num_lines] = malloc(len + 1);
         if (!lines[num_lines]) {
             printf("malloc failed for line");
-            fclose(file);
+            fclose(file); // throw error if malloc fails
             free(line);
             return -1;
         }
@@ -160,7 +162,7 @@ int main(int argc, char* argv[]) {
     free(max_char_values);
     free(threads);
     free(thread_ids);
-    pthread_mutex_destroy(&count_mutex);
+    pthread_mutex_destroy(&count_mutex); // destroy mutex after finished
 
 
     return 0;

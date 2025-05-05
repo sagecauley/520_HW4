@@ -13,10 +13,10 @@ int* max_char_values = NULL;
 // Function to compute max ASCII value in a line
 int max_ascii_value(const char* line) {
     int max_value = 0;
-    while (*line) {
+    while (*line) { // while there are more chars left
         unsigned char c = (unsigned char)*line;
         if (c <= 127 && c > max_value) {
-            max_value = c;
+            max_value = c; // update max value if current char exceeds
         }
         line++;
     }
@@ -25,45 +25,46 @@ int max_ascii_value(const char* line) {
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
+        // if number of args is incorrect, throw error.
         fprintf(stderr, "Usage: %s <file_path> <num_threads>\n", argv[0]);
         return -1;
     }
 
     const char* file_path = argv[1];
     NUM_THREADS = atoi(argv[2]);
-    FILE* file = fopen(file_path, "r");
+    FILE* file = fopen(file_path, "r"); // open file with lines
     if (!file) {
-        printf("Error opening file\n");
+        printf("Error opening file\n"); // throw error if opening fails
         return -1;
     }
 
     // Allocate memory for lines
     size_t capacity = 1000000;
-    lines = malloc(capacity * sizeof(char*));
+    lines = malloc(capacity * sizeof(char*)); 
     if (!lines) {
-        printf("malloc failed\n");
+        printf("malloc failed\n"); // throw error if malloc fails
         fclose(file);
         return -1;
     }
 
     char* line = NULL;
     size_t len = 0;
-    while (getline(&line, &len, file) != -1) {
+    while (getline(&line, &len, file) != -1) { // get each line from file
         if (num_lines >= capacity) {
-            capacity *= 2;
+            capacity *= 2; // increase capacity if there is not enough space for lines
             lines = realloc(lines, capacity * sizeof(char*));
             if (!lines) {
                 printf("realloc failed\n");
                 fclose(file);
-                free(line);
+                free(line); // throw error if reallocation fails
                 return -1;
             }
         }
-        lines[num_lines] = malloc(len + 1);
+        lines[num_lines] = malloc(len + 1); // allocate space for line and string terminator
         if (!lines[num_lines]) {
             printf("malloc failed for line\n");
             fclose(file);
-            free(line);
+            free(line); // throw error if allocation fails
             return -1;
         }
         memcpy(lines[num_lines], line, len + 1);
