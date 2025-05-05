@@ -140,17 +140,19 @@ int main(int argc, char* argv[]) {
 
 
     
-    // Calculate the elapsed time in seconds
-    double elapsed_time = (end_time.tv_sec - start_time.tv_sec) +
-    (end_time.tv_nsec - start_time.tv_nsec) / 1e9;
 
-    // Print the elapsed time
-    printf("Thread time: %f seconds\n", elapsed_time);
 
     if (pid == 0) {
         //for (int i = 0; i < num_lines; ++i) {
             //printf("Line %d max ASCII: %d\n", i, all_max_ascii[i]);
         //}
+        clock_gettime(CLOCK_MONOTONIC, &end_time);   
+        // Calculate the elapsed time in seconds
+        double elapsed_time = (end_time.tv_sec - start_time.tv_sec) +
+        (end_time.tv_nsec - start_time.tv_nsec) / 1e9;
+    
+        // Print the elapsed time
+        printf("Thread time: %f seconds\n", elapsed_time);
 
         free(all_max_ascii);
         free(lines);

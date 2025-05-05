@@ -13,7 +13,7 @@ cd 3way-pthread
 #make clean
 make
 #run the configs.sh file
-./configs.sh
+#./configs.sh
 #exit
 #go back to the main directory
 cd ..
@@ -27,7 +27,7 @@ cd 3way-mpi
 #make clean
 make
 #run the configs.sh file
-./configs.sh
+#./configs.sh
 #exit
 #go back to the main directory
 cd ..
@@ -42,7 +42,7 @@ cd 3way-openmp
 #make clean
 make
 #run the configs.sh file
-./configs.sh
+#./configs.sh
 #exit
 #go back to the main directory
 cd ..
