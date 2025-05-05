@@ -144,9 +144,9 @@ int main(int argc, char* argv[]) {
 
 
     if (pid == 0) {
-        //for (int i = 0; i < num_lines; ++i) {
-            //printf("Line %d max ASCII: %d\n", i, all_max_ascii[i]);
-        //}
+        for (int i = 0; i < 200; ++i) {
+            printf("Line %d max ASCII: %d\n", i, all_max_ascii[i]);
+        }
         clock_gettime(CLOCK_MONOTONIC, &end_time);   
         // Calculate the elapsed time in seconds
         double elapsed_time = (end_time.tv_sec - start_time.tv_sec) +

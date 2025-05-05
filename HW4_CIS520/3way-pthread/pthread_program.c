@@ -150,8 +150,8 @@ int main(int argc, char* argv[]) {
     // Print the elapsed time
     printf("Thread time: %f seconds\n", elapsed_time);
     // Print results
-    for (int i = 0; i < num_lines; i++) {
-        //printf("%d: %d\n", i, max_char_values[i]);
+    for (int i = 0; i < 200; i++) {
+        printf("%d: %d\n", i, max_char_values[i]);
     }
 
     // Clean up

@@ -98,8 +98,8 @@ int main(int argc, char* argv[]) {
     printf("OpenMP time: %f seconds\n", elapsed_time);
 
     // Uncomment if you want to print the results
-    for (int i = 0; i < num_lines; i++) {
-        //printf("%d: %d\n", i, max_char_values[i]);
+    for (int i = 0; i < 200; i++) {
+        printf("%d: %d\n", i, max_char_values[i]);
     }
 
     // Clean up
