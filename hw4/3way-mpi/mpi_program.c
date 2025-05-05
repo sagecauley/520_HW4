@@ -9,9 +9,10 @@
 // Function to compute max ASCII value in a line (up to '\n' or null terminator)
 int max_ascii_value_mpi(const char* line) {
     int max_value = 0;
+    // for each character in line:
     for (int i = 0; i < MAX_LINE_LENGTH && line[i] != '\0' && line[i] != '\n'; ++i) {
         unsigned char c = (unsigned char)line[i];
-        if (c <= 127 && c > max_value) {
+        if (c <= 127 && c > max_value) { // set max value if c is greater
             max_value = c;
         }
     }
@@ -19,29 +20,27 @@ int max_ascii_value_mpi(const char* line) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
+    if (argc != 2) { // print usage pattern if there is not a file path
         fprintf(stderr, "Usage: %s <file_path>\n", argv[0]);
         return 1;
     }
 
-    const char* file_path = argv[1];
+    const char* file_path = argv[1]; // get file path from args
 
-    //clock_t start_time = clock();
-
-    MPI_Init(&argc, &argv);
+    MPI_Init(&argc, &argv); // initialize MPI
 
     int pid, num_procs;
-    MPI_Comm_rank(MPI_COMM_WORLD, &pid);
-    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &pid); // get pid for thread
+    MPI_Comm_size(MPI_COMM_WORLD, &num_procs); // get number of processes
 
     char (*lines)[MAX_LINE_LENGTH] = NULL;
     int num_lines = 0;
 
-    if (pid == 0) {
-        FILE* file = fopen(file_path, "r");
+    if (pid == 0) { 
+        FILE* file = fopen(file_path, "r"); // open file with lines
         if (!file) {
-            fprintf(stderr, "Error opening file: %s\n", file_path);
-            MPI_Abort(MPI_COMM_WORLD, 1);
+            fprintf(stderr, "Error opening file: %s\n", file_path); 
+            MPI_Abort(MPI_COMM_WORLD, 1); // abort and notify user if error
         }
 
         size_t capacity = 1024;
@@ -49,28 +48,28 @@ int main(int argc, char* argv[]) {
         if (!lines) {
             fprintf(stderr, "Initial memory allocation failed\n");
             fclose(file);
-            MPI_Abort(MPI_COMM_WORLD, 1);
+            MPI_Abort(MPI_COMM_WORLD, 1); // abort and notify user if error
         }
 
         char buffer[MAX_LINE_LENGTH];
-        while (fgets(buffer, MAX_LINE_LENGTH, file)) {
+        while (fgets(buffer, MAX_LINE_LENGTH, file)) { // load each line into buffer
             if (num_lines >= capacity) {
-                capacity *= 2;
+                capacity *= 2; // increase capacity if lines exceed and reallocate memory
                 char (*new_lines)[MAX_LINE_LENGTH] = realloc(lines, capacity * sizeof(*lines));
                 if (!new_lines) {
                     fprintf(stderr, "Memory reallocation failed\n");
                     free(lines);
                     fclose(file);
-                    MPI_Abort(MPI_COMM_WORLD, 1);
+                    MPI_Abort(MPI_COMM_WORLD, 1); // if reallocation fails, notify user and abort
                 }
                 lines = new_lines;
             }
 
-            strncpy(lines[num_lines], buffer, MAX_LINE_LENGTH);
+            memcpy(lines[num_lines], buffer, MAX_LINE_LENGTH); // copy buffer into lines array
             num_lines++;
         }
 
-        fclose(file);
+        fclose(file); // close file
     }
 
     // Broadcast number of lines to all processes
@@ -81,13 +80,13 @@ int main(int argc, char* argv[]) {
     int* displs = NULL;
 
     if (pid == 0) {
-        sendcounts = malloc(num_procs * sizeof(int));
-        displs = malloc(num_procs * sizeof(int));
+        sendcounts = malloc(num_procs * sizeof(int)); // allocate memory for counts
+        displs = malloc(num_procs * sizeof(int)); // and displacements
 
         int base = num_lines / num_procs;
         int rem = num_lines % num_procs;
 
-        for (int i = 0; i < num_procs; ++i) {
+        for (int i = 0; i < num_procs; ++i) { // calculate displacements and counts
             int count = (i < rem ? base + 1 : base);
             sendcounts[i] = count * MAX_LINE_LENGTH;
             displs[i] = (i == 0) ? 0 : displs[i - 1] + sendcounts[i - 1];
@@ -99,6 +98,7 @@ int main(int argc, char* argv[]) {
     
     // Each process calculates how many lines it will get
     int local_line_bytes;
+    // scatter sendcounts to all processes
     MPI_Scatter(sendcounts, 1, MPI_INT, &local_line_bytes, 1, MPI_INT, 0, MPI_COMM_WORLD);
     int local_line_count = local_line_bytes / MAX_LINE_LENGTH;
 
@@ -121,6 +121,7 @@ int main(int argc, char* argv[]) {
     if (pid == 0) {
         recvcounts_int = malloc(num_procs * sizeof(int));
         displs_int = malloc(num_procs * sizeof(int));
+        // calculate how many lines each process recieved
         for (int i = 0; i < num_procs; ++i) {
             recvcounts_int[i] = sendcounts[i] / MAX_LINE_LENGTH;
             displs_int[i] = (i == 0) ? 0 : displs_int[i - 1] + recvcounts_int[i - 1];
@@ -163,7 +164,7 @@ int main(int argc, char* argv[]) {
     free(local_lines);
     free(local_max_ascii);
 
-    MPI_Finalize();
+    MPI_Finalize(); // close MPI
 
     return 0;
 }
